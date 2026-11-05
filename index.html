@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TU Food Pass - สุ่มอาหาร & สมาชิกสายกิน มธ. (TU109 Offline Web App)</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+  <!-- Confetti Canvas for 100% offline celebrations -->
+  <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+  <!-- Professor / Demo Quick Control Bar -->
+  <header class="demo-control-bar">
+    <div class="demo-title">
+      <span>🎓 TU109 Demo Bar:</span>
+      <span style="font-weight: normal; opacity: 0.85;">กดสลับเพื่อทดสอบแต่ละแพ็กเกจ</span>
+    </div>
+    <div class="demo-buttons-group">
+      <button class="btn-demo-tier" data-tier="FREE" onclick="TUApp.setTier('FREE')">1. Free User</button>
+      <button class="btn-demo-tier active" data-tier="EATER_PASS" onclick="TUApp.setTier('EATER_PASS')">2. Eater Pass ⭐</button>
+      <button class="btn-demo-tier" data-tier="MEAL_PLAN" onclick="TUApp.setTier('MEAL_PLAN')">3. Meal Plan 🍱</button>
+      <button class="btn-demo-tier" data-tier="VIP" onclick="TUApp.setTier('VIP')">4. VIP All-Access 👑</button>
+      <button class="btn-demo-tier" id="btn-sound-toggle" onclick="const m = TUAudio.toggleMute(); this.textContent = m ? '🔇 ปิดเสียง' : '🔊 เปิดเสียง';">🔊 เปิดเสียง</button>
+    </div>
+  </header>
+
+  <div class="app-container">
+
+    <!-- App Brand Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-logo-badge">TU</div>
+        <div class="brand-text">
+          <h1>TU Food Pass <span>🍜</span></h1>
+          <p>ระบบสุ่มอาหาร & นักล่าส่วนลด มหาวิทยาลัยธรรมศาสตร์ ศูนย์รังสิต</p>
+        </div>
+      </div>
+      <div class="header-user-status">
+        <div id="user-tier-badge" class="tier-badge badge-eater">EATER PASS ⭐</div>
+        <div id="user-tier-title" class="tier-desc-text">นักล่าส่วนลด (สุ่มได้คูปอง 10-15%)</div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-bar-container">
+      <button class="nav-bar-item active" id="nav-btn-wheel" onclick="TUApp.navigateToTab('wheel')">
+        <span class="nav-icon">🎡</span>
+        <span>วงล้อสุ่ม</span>
+      </button>
+      <button class="nav-bar-item" id="nav-btn-fast" onclick="TUApp.navigateToTab('fast')">
+        <span class="nav-icon">⚡</span>
+        <span>สุ่มด่วน 1วิ</span>
+      </button>
+      <button class="nav-bar-item" id="nav-btn-gacha" onclick="TUApp.navigateToTab('gacha')">
+        <span class="nav-icon">🎁</span>
+        <span>กล่องสุ่ม</span>
+      </button>
+      <button class="nav-bar-item" id="nav-btn-wallet" onclick="TUApp.navigateToTab('wallet')">
+        <span class="nav-icon">🎟️</span>
+        <span>กระเป๋าคูปอง</span>
+      </button>
+      <button class="nav-bar-item" id="nav-btn-mealplan" onclick="TUApp.navigateToTab('mealplan')">
+        <span class="nav-icon">🍱</span>
+        <span>จัดเซต 7 วัน</span>
+      </button>
+      <button class="nav-bar-item" id="nav-btn-mutelu" onclick="TUApp.navigateToTab('mutelu')">
+        <span class="nav-icon">🔮</span>
+        <span>สายมู/สุขภาพ</span>
+      </button>
+      <button class="nav-bar-item" id="nav-btn-friends" onclick="TUApp.navigateToTab('friends')">
+        <span class="nav-icon">👥</span>
+        <span>สุ่มกับเพื่อน</span>
+      </button>
+      <button class="nav-bar-item" id="nav-btn-directory" onclick="TUApp.navigateToTab('directory')">
+        <span class="nav-icon">🏬</span>
+        <span>รวมร้าน มธ.</span>
+      </button>
+    </nav>
+
+    <!-- TAB 1: Roulette Wheel Randomizer -->
+    <main id="panel-wheel" class="tab-content-panel">
+      <div class="glass-card">
+        <div class="wheel-layout-grid">
+          
+          <!-- Filters Column -->
+          <div class="filter-controls-box">
+            <div class="filter-title">
+              <span>🎯 ตั้งค่าการสุ่ม</span>
+              <span class="badge-count" id="stall-count-badge">32 ร้านพร้อมสุ่ม</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="select-location">📍 โรงอาหาร / พิกัดใน มธ.</label>
+              <select id="select-location" class="form-select">
+                <!-- Populated dynamically from data.js -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="select-food-type">🍽️ ประเภทอาหาร</label>
+              <select id="select-food-type" class="form-select">
+                <!-- Populated dynamically from data.js -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">💰 งบประมาณต่อมื้อ</label>
+              <div class="budget-chips-row">
+                <div class="budget-chip active" data-budget="ALL" onclick="TUApp.setBudget('ALL')">ทั้งหมด</div>
+                <div class="budget-chip" data-budget="CHEAP" onclick="TUApp.setBudget('CHEAP')">&lt; 50฿</div>
+                <div class="budget-chip" data-budget="MID" onclick="TUApp.setBudget('MID')">50-80฿</div>
+                <div class="budget-chip" data-budget="HIGH" onclick="TUApp.setBudget('HIGH')">&gt; 80฿</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <button id="btn-open-only" class="btn-toggle-open" onclick="TUApp.toggleOpenOnly()">
+                <span>⏰ กรองเฉพาะร้านที่เปิดอยู่ตอนนี้</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Wheel Visual Column -->
+          <div class="wheel-visual-box">
+            <div class="wheel-pointer"></div>
+            <canvas id="wheel-canvas" class="wheel-canvas"></canvas>
+            <button class="btn btn-primary btn-large" id="btn-spin-wheel" onclick="TUApp.spinWheel()">
+              🎡 หมุนวงล้อสุ่มเลย!
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- TAB 2: Fast / Slot Machine Randomizer -->
+    <section id="panel-fast" class="tab-content-panel hidden">
+      <div class="glass-card" id="fast-random-container">
+        <!-- Rendered by app.js -->
+      </div>
+    </section>
+
+    <!-- TAB 3: Gacha Blind Box -->
+    <section id="panel-gacha" class="tab-content-panel hidden">
+      <div class="glass-card" id="gacha-container">
+        <!-- Rendered by app.js -->
+      </div>
+    </section>
+
+    <!-- TAB 4: My Coupons Wallet (Eater Pass) -->
+    <section id="panel-wallet" class="tab-content-panel hidden">
+      <div class="glass-card" id="wallet-container">
+        <!-- Rendered by app.js -->
+      </div>
+    </section>
+
+    <!-- TAB 5: Meal Plan Creator (Package 2) -->
+    <section id="panel-mealplan" class="tab-content-panel hidden">
+      <div class="glass-card" id="mealplan-container">
+        <!-- Rendered by app.js -->
+      </div>
+    </section>
+
+    <!-- TAB 6: Mutelu & Health (Package 3) -->
+    <section id="panel-mutelu" class="tab-content-panel hidden">
+      <div class="glass-card" id="mutelu-container">
+        <!-- Rendered by app.js -->
+      </div>
+    </section>
+
+    <!-- TAB 7: Party Squad with Friends (Package 3) -->
+    <section id="panel-friends" class="tab-content-panel hidden">
+      <div class="glass-card" id="friends-container">
+        <!-- Rendered by app.js -->
+      </div>
+    </section>
+
+    <!-- TAB 8: Campus Directory -->
+    <section id="panel-directory" class="tab-content-panel hidden">
+      <div class="glass-card" id="directory-container">
+        <!-- Rendered by app.js -->
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Result Modal Popup -->
+  <div id="app-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <button class="btn-close-modal" onclick="TUApp.closeModal()">✕</button>
+      <div id="modal-content">
+        <!-- Populated dynamically by showResultPopup() -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="app-toast" class="app-toast hidden"></div>
+
+  <!-- Application Scripts (Standard relative paths for 100% offline file:// compatibility) -->
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/wheel.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
