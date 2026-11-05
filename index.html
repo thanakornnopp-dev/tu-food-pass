@@ -2,289 +2,109 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Food & Lifestyle - baanTU ธรรมศาสตร์ (TU109)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>TU Food Pass</title>
+  <meta name="description" content="สุ่มร้านอาหาร มธ. รังสิต พร้อมเมนู ราคา และคูปอง ใช้งานได้แบบออฟไลน์">
 
-  <!-- PWA & Mobile Web App Meta Tags -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#10b981">
+  <meta name="theme-color" content="#44091a">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Food&Life">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TU Food Pass">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
 
+  <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 
-  <!-- Confetti Canvas for 100% offline celebrations -->
-  <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+  <!-- Icon sprite: one stroke weight, authored for this app -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-spin" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="9" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="9" cy="15" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.2" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-store" viewBox="0 0 24 24"><path d="M3 10l1.7-5.5h14.6L21 10"/><path d="M3 10a3 3 0 006 0 3 3 0 006 0 3 3 0 006 0"/><path d="M5 12.6V20h14v-7.4"/><path d="M10 20v-4.5h4V20"/></symbol>
+      <symbol id="i-plan" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3.5"/><path d="M4 10h16M8.5 3v4M15.5 3v4"/><path d="M8 14h2M14 14h2M8 17h2"/></symbol>
+      <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 8.5A2.5 2.5 0 015.5 6h13A2.5 2.5 0 0121 8.5v1.2a2.3 2.3 0 000 4.6v1.2a2.5 2.5 0 01-2.5 2.5h-13A2.5 2.5 0 013 15.5v-1.2a2.3 2.3 0 000-4.6z"/><path d="M14.5 7v2M14.5 11v2M14.5 15v2"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.4-3.6 3.2-5.6 7-5.6s6.6 2 7 5.6"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9.5" rx="2.5"/><path d="M8 11V8a4 4 0 018 0v3"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s6.5-5.7 6.5-11A6.5 6.5 0 005.5 10c0 5.3 6.5 11 6.5 11z"/><circle cx="12" cy="10" r="2.3"/></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9-4.3-4.1 5.9-.8z"/></symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M19.5 11a7.5 7.5 0 00-13.2-3.6L4.5 9.5"/><path d="M4.5 4.5v5h5"/><path d="M4.5 13a7.5 7.5 0 0013.2 3.6l1.8-2.1"/><path d="M19.5 19.5v-5h-5"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.2"/><path d="M3 19.5c.3-3.2 2.8-5 6-5s5.7 1.8 6 5"/><circle cx="17" cy="9.5" r="2.5"/><path d="M17 14.5c2.4 0 4 1.5 4.2 4"/></symbol>
+      <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M11 3.5l1.9 5.6 5.6 1.9-5.6 1.9L11 18.5l-1.9-5.6L3.5 11l5.6-1.9z"/><path d="M19 3v4M17 5h4M18 16.5v3.5M16.2 18.2h3.6"/></symbol>
+      <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19.5C4.5 11 9.5 5 20 4.5c.5 10.5-5.5 15.5-13.5 15"/><path d="M5 19.5c2.8-4.6 6-7.6 10.5-9.5"/></symbol>
+      <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5l5 4v-13l-5 4z"/><path d="M16 9.2a4 4 0 010 5.6M18.5 6.8a7.5 7.5 0 010 10.4"/></symbol>
+      <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5l5 4v-13l-5 4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4.5 19.5l1-4.2L16 4.8a2 2 0 012.8 0l.4.4a2 2 0 010 2.8L8.7 18.5z"/><path d="M14 7l3 3"/></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></symbol>
+      <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5.5 13.2H11L10 21l7.5-10.2H12z"/></symbol>
+      <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 16.5V7.5h3a2.2 2.2 0 010 4.4h-3M9.6 11.9h3.4a2.3 2.3 0 010 4.6H9.6M11.2 6v1.5M11.2 16.5V18"/></symbol>
+      <symbol id="i-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9 9l6 6M15 9l-6 6"/></symbol>
 
-  <!-- TOP HEADER (Exactly like in the Reels clip) -->
-  <header class="top-header">
-    <div class="header-user-count">
-      <span class="header-user-icon">👤</span>
-      <span>16,016</span>
-    </div>
-    <div class="header-logo-area">
-      <span class="header-logo-badge">🛍️</span>
-      <span class="header-logo-text">Food <span class="header-logo-sub">& Lifestyle</span></span>
-    </div>
-    <div class="header-lang-switch">
-      <span class="active">TH</span> | <span>EN</span>
-    </div>
-  </header>
+      <!-- food glyphs: placeholders until real photos arrive -->
+      <symbol id="f-ALL" viewBox="0 0 24 24"><path d="M8 3v7.5M5.5 3v4.5a2.5 2.5 0 005 0V3M8 11v10"/><path d="M17.5 3c-2.3 1.2-3.5 4-3.5 7.5h3.5M17.5 3v18"/></symbol>
+      <symbol id="f-A_LA_CARTE" viewBox="0 0 24 24"><path d="M3 12h14a7 7 0 01-7 7 7 7 0 01-7-7z"/><path d="M17 12.5l4.5-2.5"/><path d="M7 8.5c0-1.2 1.2-1.2 1.2-2.4M11 8.5c0-1.2 1.2-1.2 1.2-2.4"/></symbol>
+      <symbol id="f-NOODLE" viewBox="0 0 24 24"><path d="M3 12.5h18a9 9 0 01-9 8 9 9 0 01-9-8z"/><path d="M8 12.5L15.5 4M11.5 12.5l7-8.2"/><path d="M6.5 12.5c1.5-2 3.5 2 5 0s3.5 2 5 0"/></symbol>
+      <symbol id="f-RICE_CURRY" viewBox="0 0 24 24"><path d="M3 13.5h18a9 9 0 01-9 7.5 9 9 0 01-9-7.5z"/><path d="M6.5 13.5a5.5 5.5 0 0111 0"/><path d="M10 9.5l.3.3M13.6 8.6l.3.3M12 6.8l.3.3" stroke-width="2.2"/></symbol>
+      <symbol id="f-JAPAN_INTER" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3.5"/><path d="M3 12h18M12 6v12"/><circle cx="7.5" cy="9" r="1" fill="currentColor" stroke="none"/><circle cx="16.5" cy="15" r="1" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="f-HEALTHY_HALAL" viewBox="0 0 24 24"><path d="M5 19.5C4.5 11 9.5 5 20 4.5c.5 10.5-5.5 15.5-13.5 15"/><path d="M5 19.5c2.8-4.6 6-7.6 10.5-9.5"/></symbol>
+      <symbol id="f-DRINK_CAFE" viewBox="0 0 24 24"><path d="M6.5 8.5h11l-1.2 11.2a1 1 0 01-1 .8H8.7a1 1 0 01-1-.8z"/><path d="M5.5 8.5h13M13 8.5l1.8-5.5h3"/><path d="M8 13.5h8"/></symbol>
+      <symbol id="f-DESSERT_SNACK" viewBox="0 0 24 24"><path d="M6.5 13h11l-1.4 7h-8.2z"/><path d="M5.5 13a3.5 3.5 0 012.6-3.4A3.7 3.7 0 0112 6.5a3.7 3.7 0 013.9 3.1 3.5 3.5 0 012.6 3.4"/><path d="M12 6.5V4.5"/></symbol>
+    </defs>
+  </svg>
 
-  <!-- DEMO SWITCHER BAR FOR TU109 PROFESSOR (Discreet & Convenient) -->
-  <div class="tu109-quick-bar">
-    <span class="quick-bar-label">🎓 TU109 Demo:</span>
-    <select id="quick-tier-select" class="quick-bar-select" onchange="TUApp.setTier(this.value)">
-      <option value="FREE">1. Free User (แบบในคลิป)</option>
-      <option value="EATER_PASS" selected>2. Eater Pass ⭐ (สุ่มแล้วได้คูปอง)</option>
-      <option value="MEAL_PLAN">3. Meal Plan 🍱 (เซต 7 วัน 21 มื้อ)</option>
-      <option value="VIP">4. VIP All-Access 👑 (สายมู + แก๊ง)</option>
-    </select>
+  <div class="app" id="app">
+    <header class="topbar">
+      <button class="brand" id="brand" type="button" aria-label="TU Food Pass">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M4 8.5A3.5 3.5 0 017.5 5h17A3.5 3.5 0 0128 8.5v3a3 3 0 000 6v6a3.5 3.5 0 01-3.5 3.5h-17A3.5 3.5 0 014 23.5v-6a3 3 0 000-6z" fill="#e8b94b" transform="translate(0 .5)"/>
+          <path d="M9.5 15.5h13a6.5 6.5 0 01-6.5 6 6.5 6.5 0 01-6.5-6zM12.5 15l5-6.2M16 15l4.5-5.4" fill="none" stroke="#44091a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="brand-name">TU <b>Food Pass</b></span>
+      </button>
+      <button class="tier-chip" id="tier-chip" type="button" data-action="go" data-tab="pass" data-tier="FREE">
+        <svg class="ico ico--sm"><use href="#i-star"/></svg>
+        <span id="tier-chip-label">Free</span>
+      </button>
+    </header>
+
+    <main class="scroll" id="scroll">
+      <section class="screen" id="screen-spin" data-screen="spin"></section>
+      <section class="screen" id="screen-stalls" data-screen="stalls" hidden></section>
+      <section class="screen" id="screen-plan" data-screen="plan" hidden></section>
+      <section class="screen" id="screen-wallet" data-screen="wallet" hidden></section>
+      <section class="screen" id="screen-pass" data-screen="pass" hidden></section>
+    </main>
+
+    <nav class="tabbar" id="tabbar" aria-label="เมนูหลัก">
+      <button class="tab" type="button" data-action="go" data-tab="spin"><svg class="ico"><use href="#i-spin"/></svg><span>สุ่ม</span></button>
+      <button class="tab" type="button" data-action="go" data-tab="stalls"><svg class="ico"><use href="#i-store"/></svg><span>ร้านค้า</span></button>
+      <button class="tab" type="button" data-action="go" data-tab="plan"><svg class="ico"><use href="#i-plan"/></svg><span>แผนอาหาร</span></button>
+      <button class="tab" type="button" data-action="go" data-tab="wallet"><svg class="ico"><use href="#i-ticket"/></svg><span>กระเป๋า</span></button>
+      <button class="tab" type="button" data-action="go" data-tab="pass"><svg class="ico"><use href="#i-user"/></svg><span>บัตรฉัน</span></button>
+    </nav>
   </div>
 
-  <main class="content-area">
+  <div id="layer"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
 
-    <!-- TAB 1: HOME (From Frame 00:44) -->
-    <section id="pane-home" class="tab-pane hidden">
-      <div class="home-banner">
-        <div class="home-banner-tag">EAT | LIVE | LOVE TU</div>
-        <h2 class="home-banner-title">ยินดีต้อนรับ TU 92</h2>
-        <p class="home-banner-desc">ก้าวสู่รั้วธรรมศาสตร์ ไม่ไปแวะกิน ถือว่ามาไม่ถึง</p>
-        <div class="home-banner-pills">
-          <span>🍜 ของกินรอบมอ</span>
-          <span>•</span>
-          <span>🚲 ไลฟ์สไตล์เด็กหอ</span>
-        </div>
-      </div>
-
-      <div class="home-section-title">
-        <span>Events</span>
-        <a href="javascript:void(0)" class="home-section-link">View All ></a>
-      </div>
-      <div class="home-event-card">
-        <div class="event-date-box">
-          <div class="event-date-num">30</div>
-          <div class="event-date-month">ก.ค.</div>
-        </div>
-        <div class="event-info">
-          <div class="event-info-title">"baanTU Service" สัญจร</div>
-          <div class="event-info-sub">มหาวิทยาลัยธรรมศาสตร์ ศูนย์รังสิต (16:00 - 23:00)</div>
-        </div>
-      </div>
-
-      <div class="home-section-title">
-        <span>Announcements</span>
-        <a href="javascript:void(0)" class="home-section-link">View All ></a>
-      </div>
-      <div class="home-event-card">
-        <div class="event-date-box">
-          <div class="event-date-num">HOW</div>
-          <div class="event-date-month">Cafeteria</div>
-        </div>
-        <div class="event-info">
-          <div class="event-info-title">เปิดโซนอาหารสุขภาพ Green Canteen</div>
-          <div class="event-info-sub">ศูนย์อาหารเพื่อสุขภาวะที่ดีของชาวธรรมศาสตร์</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 2: FOOD COURT (From Frame 00:46) -->
-    <section id="pane-foodcourt" class="tab-pane hidden">
-      <h3 style="font-size: 17px; font-weight: 800; margin-bottom: 10px;">Select Location</h3>
-      
-      <!-- Horizontally Scrollable Location Pills -->
-      <div class="location-chips-scroll">
-        <div class="location-pill active" onclick="TUApp.filterCourtLocation('ALL', this)">ทั้งหมด</div>
-        <div class="location-pill" onclick="TUApp.filterCourtLocation('SC', this)">ศูนย์อาหารสังคมศาสตร์ (SC)</div>
-        <div class="location-pill" onclick="TUApp.filterCourtLocation('EN', this)">ศูนย์อาหารวิศวกรรมศาสตร์ (EN)</div>
-        <div class="location-pill" onclick="TUApp.filterCourtLocation('SCI', this)">ศูนย์อาหารวิทยาศาสตร์ (SCI)</div>
-        <div class="location-pill" onclick="TUApp.filterCourtLocation('TS', this)">ศูนย์อาหารทิวสน (TS)</div>
-        <div class="location-pill" onclick="TUApp.filterCourtLocation('HOW', this)">ห้องอาหาร HOW Cafeteria</div>
-        <div class="location-pill" onclick="TUApp.filterCourtLocation('OLB', this)">ห้องอาหารอิ่มสุข (OLB)</div>
-        <div class="location-pill" onclick="TUApp.filterCourtLocation('INTERZONE', this)">อินเตอร์โซน</div>
-        <div class="location-pill" onclick="TUApp.filterCourtLocation('GYM', this)">ยิมเนเซียม 4, 6, 7</div>
-      </div>
-
-      <!-- MAP and Survey Buttons -->
-      <div class="court-actions-row">
-        <button class="court-btn-action" onclick="alert('📍 แผนที่โรงอาหาร มธ. รังสิต (ทำงานออฟไลน์)')">
-          <span>📍</span> MAP
-        </button>
-        <button class="court-btn-action" onclick="alert('📝 แบบสอบถามความพึงพอใจโรงอาหาร มธ.')">
-          <span>📝</span> Survey
-        </button>
-      </div>
-
-      <!-- Food Category Scroll -->
-      <div class="food-category-scroll">
-        <div class="category-chip active" onclick="TUApp.filterCourtCategory('ALL', this)">ทั้งหมด</div>
-        <div class="category-chip" onclick="TUApp.filterCourtCategory('A_LA_CARTE', this)">อาหารตามสั่ง</div>
-        <div class="category-chip" onclick="TUApp.filterCourtCategory('NOODLE', this)">ก๋วยเตี๋ยว</div>
-        <div class="category-chip" onclick="TUApp.filterCourtCategory('RICE_CURRY', this)">อาหารจานเดียว</div>
-        <div class="category-chip" onclick="TUApp.filterCourtCategory('DRINK_CAFE', this)">เครื่องดื่ม</div>
-        <div class="category-chip" onclick="TUApp.filterCourtCategory('DESSERT_SNACK', this)">ของหวาน</div>
-      </div>
-
-      <!-- Stalls List (Rendered dynamically) -->
-      <div id="foodcourt-stalls-list">
-        <!-- Filled by TUApp.renderFoodCourt() -->
-      </div>
-    </section>
-
-    <!-- TAB 3: RANDOM FOOD (The Core Feature from Frame 00:48) -->
-    <section id="pane-random" class="tab-pane">
-      <div class="random-screen-header">
-        <h2 class="random-title">Random Food</h2>
-        <p class="random-subtitle">Let us help you choose</p>
-      </div>
-
-      <!-- 2 Dropdown Filters -->
-      <div class="random-filters-row">
-        <div class="filter-field">
-          <label for="random-select-location">Select Location</label>
-          <select id="random-select-location" class="filter-select">
-            <!-- Populated dynamically -->
-          </select>
-        </div>
-        <div class="filter-field">
-          <label for="random-select-food-type">Select Food Type</label>
-          <select id="random-select-food-type" class="filter-select">
-            <!-- Populated dynamically -->
-          </select>
-        </div>
-      </div>
-
-      <!-- Center Interactive Noodle Card (From clip Frame 00:48) -->
-      <div class="random-noodle-card" id="random-noodle-box">
-        <div class="noodle-illustration" id="noodle-emoji">🍜</div>
-        <div class="noodle-card-title" id="noodle-title">Let us help you choose</div>
-        <div class="noodle-card-desc" id="noodle-desc">Spin!</div>
-      </div>
-
-      <!-- Result Card (Shown after spinning - From clip Frame 00:52) -->
-      <div id="random-result-box" class="hidden">
-        <!-- Rendered by TUApp.renderResultCard() -->
-      </div>
-
-      <!-- Large Orange-Red Gradient Spin Button -->
-      <button class="btn-spin-gradient" id="btn-spin-action" onclick="TUApp.spinRandomFood()">
-        🔀 Spin!
-      </button>
-    </section>
-
-    <!-- TAB 4: SHOPS / MARKET (From Frame 00:44) -->
-    <section id="pane-shops" class="tab-pane hidden">
-      <h3 style="font-size: 17px; font-weight: 800; margin-bottom: 12px;">Shops & Campus Services</h3>
-      <div class="home-event-card">
-        <div class="stall-card-thumb">🏪</div>
-        <div class="stall-card-details">
-          <div class="stall-title-name">TU Book Store (ศูนย์หนังสือ มธ.)</div>
-          <div class="stall-time-tag">อาคาร SC • อุปกรณ์เครื่องเขียน & ชีทสรุป</div>
-        </div>
-      </div>
-      <div class="home-event-card">
-        <div class="stall-card-thumb">🧺</div>
-        <div class="stall-card-details">
-          <div class="stall-title-name">baanTU Laundry Service</div>
-          <div class="stall-time-tag">หอพักโซนเคียงโดม • ซัก-อบผ้า 24 ชม.</div>
-        </div>
-      </div>
-      <div class="home-event-card">
-        <div class="stall-card-thumb">☕</div>
-        <div class="stall-card-details">
-          <div class="stall-title-name">Cafe Amazon อินเตอร์โซน</div>
-          <div class="stall-time-tag">อินเตอร์โซน • เปิด 06.30 - 20.00 น.</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 5: TU109 MEMBER PASS & WALLET -->
-    <section id="pane-profile" class="tab-pane hidden">
-      <div class="member-header-card">
-        <div class="member-pass-tag" id="profile-tier-name">EATER PASS ⭐</div>
-        <div class="member-name">คุณธนพร (คณะวิศวะ มธ.)</div>
-        <div class="member-sub-details" id="profile-tier-desc">สมาชิกนักล่าส่วนลด: สุ่มปุ๊บรับคูปอง 10-15% ทันที</div>
-      </div>
-
-      <!-- Offline Coupons Wallet -->
-      <div class="wallet-section">
-        <div class="wallet-title">
-          <span>🎟️</span> กระเป๋าคูปองของฉัน (Offline Wallet)
-        </div>
-        <div id="profile-coupons-list">
-          <!-- Filled by TUApp.renderProfileTab() -->
-        </div>
-      </div>
-
-      <!-- Package 2: Meal Plan Shortcut -->
-      <div class="tu109-feature-card">
-        <div class="tu109-card-header">
-          <span>🍱</span> แผนอาหาร 7 วัน 21 มื้อ (Meal Plan Creator)
-        </div>
-        <div class="tu109-card-desc">สุ่มและคุมงบประมาณอาหารทั้งสัปดาห์ ไม่เกินมื้อละ 50-60 บาท</div>
-        <button class="btn-use-now" style="width: 100%;" onclick="alert('🍱 แผนสัปดาห์นี้: รวม 21 มื้อ ประหยัดไปได้ 185 บาทจากส่วนลด Eater Pass!')">
-          ดูตารางอาหารประจำสัปดาห์
-        </button>
-      </div>
-
-      <!-- Package 3: Mutelu & Auspicious Colors -->
-      <div class="tu109-feature-card">
-        <div class="tu109-card-header">
-          <span>🔮</span> สุ่มสายมู มธ. (Auspicious Food Today)
-        </div>
-        <div id="profile-mutelu-box">
-          <!-- Populated dynamically -->
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- BOTTOM STICKY NAVIGATION BAR (Exactly like in the clip Frame 00:44) -->
-  <nav class="bottom-nav">
-    <button class="bottom-nav-item" id="nav-home" onclick="TUApp.switchTab('home')">
-      <span class="nav-icon">🏠</span>
-      <span>Home</span>
-    </button>
-    <button class="bottom-nav-item" id="nav-foodcourt" onclick="TUApp.switchTab('foodcourt')">
-      <span class="nav-icon">🏢</span>
-      <span>Food Court</span>
-    </button>
-    <button class="bottom-nav-item active" id="nav-random" onclick="TUApp.switchTab('random')">
-      <span class="nav-icon">🎁</span>
-      <span>Random Food</span>
-    </button>
-    <button class="bottom-nav-item" id="nav-shops" onclick="TUApp.switchTab('shops')">
-      <span class="nav-icon">🏬</span>
-      <span>Shops/Market</span>
-    </button>
-    <button class="bottom-nav-item" id="nav-profile" onclick="TUApp.switchTab('profile')">
-      <span class="nav-icon">👤</span>
-      <span>TU Pass</span>
-    </button>
-  </nav>
-
-  <!-- Toast Notification -->
-  <div id="app-toast" class="app-toast"></div>
-
-  <!-- Scripts -->
   <script src="js/data.js"></script>
   <script src="js/audio.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/spin.js"></script>
+  <script src="js/stalls.js"></script>
+  <script src="js/plan.js"></script>
+  <script src="js/wallet.js"></script>
+  <script src="js/pass.js"></script>
   <script src="js/app.js"></script>
-
-  <!-- PWA Service Worker Registration -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('PWA ServiceWorker registered:', reg.scope))
-          .catch(err => console.log('ServiceWorker registration failed:', err));
-      });
-    }
-  </script>
 </body>
 </html>
