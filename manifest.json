@@ -1,0 +1,24 @@
+{
+  "name": "TU Food Pass - สุ่มอาหาร มธ.",
+  "short_name": "TU Food",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#b91c1c",
+  "orientation": "portrait",
+  "description": "ระบบสุ่มอาหาร & สมาชิกสายกิน มหาวิทยาลัยธรรมศาสตร์ ศูนย์รังสิต (TU109 Offline Web App)",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
