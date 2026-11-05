@@ -1,11 +1,12 @@
 /**
- * TU Food Pass - Offline Web Audio API Sound Synthesizer
- * Generates tactile clicks, roulette ticks, and celebration fanfares offline without external audio files.
+ * TU Food Pass - 100% Robust Offline Audio Synthesizer
+ * Unlocks AudioContext on first touch/click and uses reliable sound generation.
  */
 
 window.TUAudio = (function() {
   let ctx = null;
   let isMuted = false;
+  let isUnlocked = false;
 
   function getAudioContext() {
     if (!ctx) {
@@ -14,15 +15,31 @@ window.TUAudio = (function() {
         ctx = new AudioCtx();
       }
     }
-    if (ctx && ctx.state === 'suspended') {
-      ctx.resume();
-    }
     return ctx;
   }
 
-  function playTone(freq, type, duration, gainStart, gainEnd = 0.001) {
+  function unlock() {
+    const ac = getAudioContext();
+    if (ac) {
+      if (ac.state === 'suspended') {
+        ac.resume().then(() => {
+          isUnlocked = true;
+        }).catch(() => {});
+      } else {
+        isUnlocked = true;
+      }
+    }
+  }
+
+  // Global listeners to unlock on first user gesture
+  ['click', 'touchstart', 'touchend', 'pointerdown'].forEach(evt => {
+    window.addEventListener(evt, unlock, { once: false, passive: true });
+  });
+
+  function playTone(freq, type = 'sine', duration = 0.08, volume = 0.3) {
     if (isMuted) return;
     try {
+      unlock();
       const ac = getAudioContext();
       if (!ac) return;
 
@@ -32,16 +49,16 @@ window.TUAudio = (function() {
       osc.type = type;
       osc.frequency.setValueAtTime(freq, ac.currentTime);
 
-      gain.gain.setValueAtTime(gainStart, ac.currentTime);
-      gain.gain.exponentialRampToValueAtTime(gainEnd, ac.currentTime + duration);
+      gain.gain.setValueAtTime(volume, ac.currentTime);
+      gain.gain.linearRampToValueAtTime(0.001, ac.currentTime + duration);
 
       osc.connect(gain);
       gain.connect(ac.destination);
 
-      osc.start();
+      osc.start(ac.currentTime);
       osc.stop(ac.currentTime + duration);
     } catch (e) {
-      // Audio not permitted or not supported
+      console.warn('Audio playTone error:', e);
     }
   }
 
@@ -53,50 +70,51 @@ window.TUAudio = (function() {
       return isMuted;
     },
 
-    setMute: function(muted) {
-      isMuted = !!muted;
-    },
+    unlock: unlock,
 
-    // UI Click sound
+    // Button click tactile sound
     click: function() {
-      playTone(480, 'sine', 0.04, 0.15, 0.01);
+      playTone(520, 'sine', 0.05, 0.25);
     },
 
-    // Roulette wheel tick sound (as it passes each slice)
-    wheelTick: function(velocity = 1) {
-      const freq = 600 + Math.min(velocity * 80, 500);
-      playTone(freq, 'triangle', 0.03, 0.2, 0.01);
+    // Spinning tick sound
+    wheelTick: function() {
+      playTone(750, 'triangle', 0.04, 0.2);
     },
 
-    // Fanfare / Celebration chime when winning a meal
+    // Spinning tick rapid
+    tickStep: function(step = 1) {
+      const freq = 500 + (step % 8) * 60;
+      playTone(freq, 'triangle', 0.05, 0.25);
+    },
+
+    // Celebration fanfare when a food is picked
     fanfare: function() {
       if (isMuted) return;
-      try {
-        const ac = getAudioContext();
-        if (!ac) return;
-
-        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
-        notes.forEach((freq, idx) => {
-          setTimeout(() => {
-            playTone(freq, 'sine', 0.35, 0.25, 0.01);
-          }, idx * 90);
-        });
-      } catch (e) {}
+      unlock();
+      const notes = [
+        { f: 523.25, d: 0.12, t: 0 },    // C5
+        { f: 659.25, d: 0.12, t: 100 },  // E5
+        { f: 783.99, d: 0.12, t: 200 },  // G5
+        { f: 1046.50, d: 0.35, t: 300 }  // C6
+      ];
+      notes.forEach(n => {
+        setTimeout(() => {
+          playTone(n.f, 'triangle', n.d, 0.35);
+        }, n.t);
+      });
     },
 
-    // Level up or Coupon unlock sound
+    // Coupon unlock sound
     couponUnlock: function() {
       if (isMuted) return;
-      try {
-        const ac = getAudioContext();
-        if (!ac) return;
-        const notes = [440, 554.37, 659.25, 880];
-        notes.forEach((freq, idx) => {
-          setTimeout(() => {
-            playTone(freq, 'triangle', 0.25, 0.2, 0.01);
-          }, idx * 75);
-        });
-      } catch (e) {}
+      unlock();
+      const notes = [440, 554.37, 659.25, 880];
+      notes.forEach((freq, idx) => {
+        setTimeout(() => {
+          playTone(freq, 'sine', 0.15, 0.3);
+        }, idx * 80);
+      });
     }
   };
 })();

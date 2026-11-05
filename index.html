@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>TU Food Pass - สุ่มอาหาร & สมาชิกสายกิน มธ. (TU109 Offline Web App)</title>
-  
+  <title>Food & Lifestyle - baanTU ธรรมศาสตร์ (TU109)</title>
+
   <!-- PWA & Mobile Web App Meta Tags -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#b91c1c">
+  <meta name="theme-color" content="#10b981">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="TU Food">
+  <meta name="apple-mobile-web-app-title" content="Food&Life">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  
+
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -20,198 +20,260 @@
   <!-- Confetti Canvas for 100% offline celebrations -->
   <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
 
-  <!-- Professor / Demo Quick Control Bar -->
-  <header class="demo-control-bar">
-    <div class="demo-title">
-      <span>🎓 TU109 Demo Bar:</span>
-      <span style="font-weight: normal; opacity: 0.85;">กดสลับเพื่อทดสอบแต่ละแพ็กเกจ</span>
+  <!-- TOP HEADER (Exactly like in the Reels clip) -->
+  <header class="top-header">
+    <div class="header-user-count">
+      <span class="header-user-icon">👤</span>
+      <span>16,016</span>
     </div>
-    <div class="demo-buttons-group">
-      <button class="btn-demo-tier" data-tier="FREE" onclick="TUApp.setTier('FREE')">1. Free User</button>
-      <button class="btn-demo-tier active" data-tier="EATER_PASS" onclick="TUApp.setTier('EATER_PASS')">2. Eater Pass ⭐</button>
-      <button class="btn-demo-tier" data-tier="MEAL_PLAN" onclick="TUApp.setTier('MEAL_PLAN')">3. Meal Plan 🍱</button>
-      <button class="btn-demo-tier" data-tier="VIP" onclick="TUApp.setTier('VIP')">4. VIP All-Access 👑</button>
-      <button class="btn-demo-tier" id="btn-sound-toggle" onclick="const m = TUAudio.toggleMute(); this.textContent = m ? '🔇 ปิดเสียง' : '🔊 เปิดเสียง';">🔊 เปิดเสียง</button>
+    <div class="header-logo-area">
+      <span class="header-logo-badge">🛍️</span>
+      <span class="header-logo-text">Food <span class="header-logo-sub">& Lifestyle</span></span>
+    </div>
+    <div class="header-lang-switch">
+      <span class="active">TH</span> | <span>EN</span>
     </div>
   </header>
 
-  <div class="app-container">
-
-    <!-- App Brand Header -->
-    <header class="app-header">
-      <div class="header-brand">
-        <div class="brand-logo-badge">TU</div>
-        <div class="brand-text">
-          <h1>TU Food Pass <span>🍜</span></h1>
-          <p>ระบบสุ่มอาหาร & นักล่าส่วนลด มหาวิทยาลัยธรรมศาสตร์ ศูนย์รังสิต</p>
-        </div>
-      </div>
-      <div class="header-user-status">
-        <div id="user-tier-badge" class="tier-badge badge-eater">EATER PASS ⭐</div>
-        <div id="user-tier-title" class="tier-desc-text">นักล่าส่วนลด (สุ่มได้คูปอง 10-15%)</div>
-      </div>
-    </header>
-
-    <!-- Navigation Tabs -->
-    <nav class="nav-bar-container">
-      <button class="nav-bar-item active" id="nav-btn-wheel" onclick="TUApp.navigateToTab('wheel')">
-        <span class="nav-icon">🎡</span>
-        <span>วงล้อสุ่ม</span>
-      </button>
-      <button class="nav-bar-item" id="nav-btn-fast" onclick="TUApp.navigateToTab('fast')">
-        <span class="nav-icon">⚡</span>
-        <span>สุ่มด่วน 1วิ</span>
-      </button>
-      <button class="nav-bar-item" id="nav-btn-gacha" onclick="TUApp.navigateToTab('gacha')">
-        <span class="nav-icon">🎁</span>
-        <span>กล่องสุ่ม</span>
-      </button>
-      <button class="nav-bar-item" id="nav-btn-wallet" onclick="TUApp.navigateToTab('wallet')">
-        <span class="nav-icon">🎟️</span>
-        <span>กระเป๋าคูปอง</span>
-      </button>
-      <button class="nav-bar-item" id="nav-btn-mealplan" onclick="TUApp.navigateToTab('mealplan')">
-        <span class="nav-icon">🍱</span>
-        <span>จัดเซต 7 วัน</span>
-      </button>
-      <button class="nav-bar-item" id="nav-btn-mutelu" onclick="TUApp.navigateToTab('mutelu')">
-        <span class="nav-icon">🔮</span>
-        <span>สายมู/สุขภาพ</span>
-      </button>
-      <button class="nav-bar-item" id="nav-btn-friends" onclick="TUApp.navigateToTab('friends')">
-        <span class="nav-icon">👥</span>
-        <span>สุ่มกับเพื่อน</span>
-      </button>
-      <button class="nav-bar-item" id="nav-btn-directory" onclick="TUApp.navigateToTab('directory')">
-        <span class="nav-icon">🏬</span>
-        <span>รวมร้าน มธ.</span>
-      </button>
-    </nav>
-
-    <!-- TAB 1: Roulette Wheel Randomizer -->
-    <main id="panel-wheel" class="tab-content-panel">
-      <div class="glass-card">
-        <div class="wheel-layout-grid">
-          
-          <!-- Filters Column -->
-          <div class="filter-controls-box">
-            <div class="filter-title">
-              <span>🎯 ตั้งค่าการสุ่ม</span>
-              <span class="badge-count" id="stall-count-badge">32 ร้านพร้อมสุ่ม</span>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="select-location">📍 โรงอาหาร / พิกัดใน มธ.</label>
-              <select id="select-location" class="form-select">
-                <!-- Populated dynamically from data.js -->
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="select-food-type">🍽️ ประเภทอาหาร</label>
-              <select id="select-food-type" class="form-select">
-                <!-- Populated dynamically from data.js -->
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">💰 งบประมาณต่อมื้อ</label>
-              <div class="budget-chips-row">
-                <div class="budget-chip active" data-budget="ALL" onclick="TUApp.setBudget('ALL')">ทั้งหมด</div>
-                <div class="budget-chip" data-budget="CHEAP" onclick="TUApp.setBudget('CHEAP')">&lt; 50฿</div>
-                <div class="budget-chip" data-budget="MID" onclick="TUApp.setBudget('MID')">50-80฿</div>
-                <div class="budget-chip" data-budget="HIGH" onclick="TUApp.setBudget('HIGH')">&gt; 80฿</div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <button id="btn-open-only" class="btn-toggle-open" onclick="TUApp.toggleOpenOnly()">
-                <span>⏰ กรองเฉพาะร้านที่เปิดอยู่ตอนนี้</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Wheel Visual Column -->
-          <div class="wheel-visual-box">
-            <div class="wheel-pointer"></div>
-            <canvas id="wheel-canvas" class="wheel-canvas"></canvas>
-            <button class="btn btn-primary btn-large" id="btn-spin-wheel" onclick="TUApp.spinWheel()">
-              🎡 หมุนวงล้อสุ่มเลย!
-            </button>
-          </div>
-
-        </div>
-      </div>
-    </main>
-
-    <!-- TAB 2: Fast / Slot Machine Randomizer -->
-    <section id="panel-fast" class="tab-content-panel hidden">
-      <div class="glass-card" id="fast-random-container">
-        <!-- Rendered by app.js -->
-      </div>
-    </section>
-
-    <!-- TAB 3: Gacha Blind Box -->
-    <section id="panel-gacha" class="tab-content-panel hidden">
-      <div class="glass-card" id="gacha-container">
-        <!-- Rendered by app.js -->
-      </div>
-    </section>
-
-    <!-- TAB 4: My Coupons Wallet (Eater Pass) -->
-    <section id="panel-wallet" class="tab-content-panel hidden">
-      <div class="glass-card" id="wallet-container">
-        <!-- Rendered by app.js -->
-      </div>
-    </section>
-
-    <!-- TAB 5: Meal Plan Creator (Package 2) -->
-    <section id="panel-mealplan" class="tab-content-panel hidden">
-      <div class="glass-card" id="mealplan-container">
-        <!-- Rendered by app.js -->
-      </div>
-    </section>
-
-    <!-- TAB 6: Mutelu & Health (Package 3) -->
-    <section id="panel-mutelu" class="tab-content-panel hidden">
-      <div class="glass-card" id="mutelu-container">
-        <!-- Rendered by app.js -->
-      </div>
-    </section>
-
-    <!-- TAB 7: Party Squad with Friends (Package 3) -->
-    <section id="panel-friends" class="tab-content-panel hidden">
-      <div class="glass-card" id="friends-container">
-        <!-- Rendered by app.js -->
-      </div>
-    </section>
-
-    <!-- TAB 8: Campus Directory -->
-    <section id="panel-directory" class="tab-content-panel hidden">
-      <div class="glass-card" id="directory-container">
-        <!-- Rendered by app.js -->
-      </div>
-    </section>
-
+  <!-- DEMO SWITCHER BAR FOR TU109 PROFESSOR (Discreet & Convenient) -->
+  <div class="tu109-quick-bar">
+    <span class="quick-bar-label">🎓 TU109 Demo:</span>
+    <select id="quick-tier-select" class="quick-bar-select" onchange="TUApp.setTier(this.value)">
+      <option value="FREE">1. Free User (แบบในคลิป)</option>
+      <option value="EATER_PASS" selected>2. Eater Pass ⭐ (สุ่มแล้วได้คูปอง)</option>
+      <option value="MEAL_PLAN">3. Meal Plan 🍱 (เซต 7 วัน 21 มื้อ)</option>
+      <option value="VIP">4. VIP All-Access 👑 (สายมู + แก๊ง)</option>
+    </select>
   </div>
 
-  <!-- Result Modal Popup -->
-  <div id="app-modal" class="modal-overlay hidden">
-    <div class="modal-box">
-      <button class="btn-close-modal" onclick="TUApp.closeModal()">✕</button>
-      <div id="modal-content">
-        <!-- Populated dynamically by showResultPopup() -->
+  <main class="content-area">
+
+    <!-- TAB 1: HOME (From Frame 00:44) -->
+    <section id="pane-home" class="tab-pane hidden">
+      <div class="home-banner">
+        <div class="home-banner-tag">EAT | LIVE | LOVE TU</div>
+        <h2 class="home-banner-title">ยินดีต้อนรับ TU 92</h2>
+        <p class="home-banner-desc">ก้าวสู่รั้วธรรมศาสตร์ ไม่ไปแวะกิน ถือว่ามาไม่ถึง</p>
+        <div class="home-banner-pills">
+          <span>🍜 ของกินรอบมอ</span>
+          <span>•</span>
+          <span>🚲 ไลฟ์สไตล์เด็กหอ</span>
+        </div>
       </div>
-    </div>
-  </div>
+
+      <div class="home-section-title">
+        <span>Events</span>
+        <a href="javascript:void(0)" class="home-section-link">View All ></a>
+      </div>
+      <div class="home-event-card">
+        <div class="event-date-box">
+          <div class="event-date-num">30</div>
+          <div class="event-date-month">ก.ค.</div>
+        </div>
+        <div class="event-info">
+          <div class="event-info-title">"baanTU Service" สัญจร</div>
+          <div class="event-info-sub">มหาวิทยาลัยธรรมศาสตร์ ศูนย์รังสิต (16:00 - 23:00)</div>
+        </div>
+      </div>
+
+      <div class="home-section-title">
+        <span>Announcements</span>
+        <a href="javascript:void(0)" class="home-section-link">View All ></a>
+      </div>
+      <div class="home-event-card">
+        <div class="event-date-box">
+          <div class="event-date-num">HOW</div>
+          <div class="event-date-month">Cafeteria</div>
+        </div>
+        <div class="event-info">
+          <div class="event-info-title">เปิดโซนอาหารสุขภาพ Green Canteen</div>
+          <div class="event-info-sub">ศูนย์อาหารเพื่อสุขภาวะที่ดีของชาวธรรมศาสตร์</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: FOOD COURT (From Frame 00:46) -->
+    <section id="pane-foodcourt" class="tab-pane hidden">
+      <h3 style="font-size: 17px; font-weight: 800; margin-bottom: 10px;">Select Location</h3>
+      
+      <!-- Horizontally Scrollable Location Pills -->
+      <div class="location-chips-scroll">
+        <div class="location-pill active" onclick="TUApp.filterCourtLocation('ALL', this)">ทั้งหมด</div>
+        <div class="location-pill" onclick="TUApp.filterCourtLocation('SC', this)">ศูนย์อาหารสังคมศาสตร์ (SC)</div>
+        <div class="location-pill" onclick="TUApp.filterCourtLocation('EN', this)">ศูนย์อาหารวิศวกรรมศาสตร์ (EN)</div>
+        <div class="location-pill" onclick="TUApp.filterCourtLocation('SCI', this)">ศูนย์อาหารวิทยาศาสตร์ (SCI)</div>
+        <div class="location-pill" onclick="TUApp.filterCourtLocation('TS', this)">ศูนย์อาหารทิวสน (TS)</div>
+        <div class="location-pill" onclick="TUApp.filterCourtLocation('HOW', this)">ห้องอาหาร HOW Cafeteria</div>
+        <div class="location-pill" onclick="TUApp.filterCourtLocation('OLB', this)">ห้องอาหารอิ่มสุข (OLB)</div>
+        <div class="location-pill" onclick="TUApp.filterCourtLocation('INTERZONE', this)">อินเตอร์โซน</div>
+        <div class="location-pill" onclick="TUApp.filterCourtLocation('GYM', this)">ยิมเนเซียม 4, 6, 7</div>
+      </div>
+
+      <!-- MAP and Survey Buttons -->
+      <div class="court-actions-row">
+        <button class="court-btn-action" onclick="alert('📍 แผนที่โรงอาหาร มธ. รังสิต (ทำงานออฟไลน์)')">
+          <span>📍</span> MAP
+        </button>
+        <button class="court-btn-action" onclick="alert('📝 แบบสอบถามความพึงพอใจโรงอาหาร มธ.')">
+          <span>📝</span> Survey
+        </button>
+      </div>
+
+      <!-- Food Category Scroll -->
+      <div class="food-category-scroll">
+        <div class="category-chip active" onclick="TUApp.filterCourtCategory('ALL', this)">ทั้งหมด</div>
+        <div class="category-chip" onclick="TUApp.filterCourtCategory('A_LA_CARTE', this)">อาหารตามสั่ง</div>
+        <div class="category-chip" onclick="TUApp.filterCourtCategory('NOODLE', this)">ก๋วยเตี๋ยว</div>
+        <div class="category-chip" onclick="TUApp.filterCourtCategory('RICE_CURRY', this)">อาหารจานเดียว</div>
+        <div class="category-chip" onclick="TUApp.filterCourtCategory('DRINK_CAFE', this)">เครื่องดื่ม</div>
+        <div class="category-chip" onclick="TUApp.filterCourtCategory('DESSERT_SNACK', this)">ของหวาน</div>
+      </div>
+
+      <!-- Stalls List (Rendered dynamically) -->
+      <div id="foodcourt-stalls-list">
+        <!-- Filled by TUApp.renderFoodCourt() -->
+      </div>
+    </section>
+
+    <!-- TAB 3: RANDOM FOOD (The Core Feature from Frame 00:48) -->
+    <section id="pane-random" class="tab-pane">
+      <div class="random-screen-header">
+        <h2 class="random-title">Random Food</h2>
+        <p class="random-subtitle">Let us help you choose</p>
+      </div>
+
+      <!-- 2 Dropdown Filters -->
+      <div class="random-filters-row">
+        <div class="filter-field">
+          <label for="random-select-location">Select Location</label>
+          <select id="random-select-location" class="filter-select">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+        <div class="filter-field">
+          <label for="random-select-food-type">Select Food Type</label>
+          <select id="random-select-food-type" class="filter-select">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Center Interactive Noodle Card (From clip Frame 00:48) -->
+      <div class="random-noodle-card" id="random-noodle-box">
+        <div class="noodle-illustration" id="noodle-emoji">🍜</div>
+        <div class="noodle-card-title" id="noodle-title">Let us help you choose</div>
+        <div class="noodle-card-desc" id="noodle-desc">Spin!</div>
+      </div>
+
+      <!-- Result Card (Shown after spinning - From clip Frame 00:52) -->
+      <div id="random-result-box" class="hidden">
+        <!-- Rendered by TUApp.renderResultCard() -->
+      </div>
+
+      <!-- Large Orange-Red Gradient Spin Button -->
+      <button class="btn-spin-gradient" id="btn-spin-action" onclick="TUApp.spinRandomFood()">
+        🔀 Spin!
+      </button>
+    </section>
+
+    <!-- TAB 4: SHOPS / MARKET (From Frame 00:44) -->
+    <section id="pane-shops" class="tab-pane hidden">
+      <h3 style="font-size: 17px; font-weight: 800; margin-bottom: 12px;">Shops & Campus Services</h3>
+      <div class="home-event-card">
+        <div class="stall-card-thumb">🏪</div>
+        <div class="stall-card-details">
+          <div class="stall-title-name">TU Book Store (ศูนย์หนังสือ มธ.)</div>
+          <div class="stall-time-tag">อาคาร SC • อุปกรณ์เครื่องเขียน & ชีทสรุป</div>
+        </div>
+      </div>
+      <div class="home-event-card">
+        <div class="stall-card-thumb">🧺</div>
+        <div class="stall-card-details">
+          <div class="stall-title-name">baanTU Laundry Service</div>
+          <div class="stall-time-tag">หอพักโซนเคียงโดม • ซัก-อบผ้า 24 ชม.</div>
+        </div>
+      </div>
+      <div class="home-event-card">
+        <div class="stall-card-thumb">☕</div>
+        <div class="stall-card-details">
+          <div class="stall-title-name">Cafe Amazon อินเตอร์โซน</div>
+          <div class="stall-time-tag">อินเตอร์โซน • เปิด 06.30 - 20.00 น.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: TU109 MEMBER PASS & WALLET -->
+    <section id="pane-profile" class="tab-pane hidden">
+      <div class="member-header-card">
+        <div class="member-pass-tag" id="profile-tier-name">EATER PASS ⭐</div>
+        <div class="member-name">คุณธนพร (คณะวิศวะ มธ.)</div>
+        <div class="member-sub-details" id="profile-tier-desc">สมาชิกนักล่าส่วนลด: สุ่มปุ๊บรับคูปอง 10-15% ทันที</div>
+      </div>
+
+      <!-- Offline Coupons Wallet -->
+      <div class="wallet-section">
+        <div class="wallet-title">
+          <span>🎟️</span> กระเป๋าคูปองของฉัน (Offline Wallet)
+        </div>
+        <div id="profile-coupons-list">
+          <!-- Filled by TUApp.renderProfileTab() -->
+        </div>
+      </div>
+
+      <!-- Package 2: Meal Plan Shortcut -->
+      <div class="tu109-feature-card">
+        <div class="tu109-card-header">
+          <span>🍱</span> แผนอาหาร 7 วัน 21 มื้อ (Meal Plan Creator)
+        </div>
+        <div class="tu109-card-desc">สุ่มและคุมงบประมาณอาหารทั้งสัปดาห์ ไม่เกินมื้อละ 50-60 บาท</div>
+        <button class="btn-use-now" style="width: 100%;" onclick="alert('🍱 แผนสัปดาห์นี้: รวม 21 มื้อ ประหยัดไปได้ 185 บาทจากส่วนลด Eater Pass!')">
+          ดูตารางอาหารประจำสัปดาห์
+        </button>
+      </div>
+
+      <!-- Package 3: Mutelu & Auspicious Colors -->
+      <div class="tu109-feature-card">
+        <div class="tu109-card-header">
+          <span>🔮</span> สุ่มสายมู มธ. (Auspicious Food Today)
+        </div>
+        <div id="profile-mutelu-box">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM STICKY NAVIGATION BAR (Exactly like in the clip Frame 00:44) -->
+  <nav class="bottom-nav">
+    <button class="bottom-nav-item" id="nav-home" onclick="TUApp.switchTab('home')">
+      <span class="nav-icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="bottom-nav-item" id="nav-foodcourt" onclick="TUApp.switchTab('foodcourt')">
+      <span class="nav-icon">🏢</span>
+      <span>Food Court</span>
+    </button>
+    <button class="bottom-nav-item active" id="nav-random" onclick="TUApp.switchTab('random')">
+      <span class="nav-icon">🎁</span>
+      <span>Random Food</span>
+    </button>
+    <button class="bottom-nav-item" id="nav-shops" onclick="TUApp.switchTab('shops')">
+      <span class="nav-icon">🏬</span>
+      <span>Shops/Market</span>
+    </button>
+    <button class="bottom-nav-item" id="nav-profile" onclick="TUApp.switchTab('profile')">
+      <span class="nav-icon">👤</span>
+      <span>TU Pass</span>
+    </button>
+  </nav>
 
   <!-- Toast Notification -->
-  <div id="app-toast" class="app-toast hidden"></div>
+  <div id="app-toast" class="app-toast"></div>
 
-  <!-- Application Scripts (Standard relative paths for 100% offline file:// compatibility) -->
+  <!-- Scripts -->
   <script src="js/data.js"></script>
   <script src="js/audio.js"></script>
-  <script src="js/wheel.js"></script>
   <script src="js/app.js"></script>
 
   <!-- PWA Service Worker Registration -->
